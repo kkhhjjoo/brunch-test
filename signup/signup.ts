@@ -61,54 +61,126 @@ function setFormStatus(message: string, type: "success" | "error" | "info" = "in
   }
 }
 
-function validateNickname(ignoreDuplicate = false): boolean {
+/**
+ * 닉네임 필드 값 자체의 유효성 검사 (길이 등)를 수행합니다.
+ * 필드 상태 업데이트(메시지 표시)는 ignoreStateUpdate가 false일 때만 수행합니다.
+ * @param ignoreStateUpdate 필드 상태(색상, 메시지) 업데이트를 무시할지 여부
+ * @returns 유효성 여부
+ */
+function checkNicknameValueValidity(ignoreStateUpdate = false): boolean {
   if (!nicknameInput) {
     return false;
   }
   const value = nicknameInput.value.trim();
+  
   if (value.length < 2) {
-    setFieldState("nickname", "error", "별명은 2자 이상 입력해주세요.");
-    duplicateState.nicknameChecked = false;
+    if (!ignoreStateUpdate) {
+      setFieldState("nickname", "error", "별명은 2자 이상 입력해주세요.");
+    }
     return false;
   }
   if (value.length > 20) {
-    setFieldState("nickname", "error", "20자 이하로 입력해주세요.");
-    duplicateState.nicknameChecked = false;
+    if (!ignoreStateUpdate) {
+      setFieldState("nickname", "error", "20자 이하로 입력해주세요.");
+    }
     return false;
   }
-  if (!ignoreDuplicate && !duplicateState.nicknameChecked) {
+  
+  // 값 자체는 유효하지만, 아직 중복 확인을 하지 않은 경우
+  if (!ignoreStateUpdate && !duplicateState.nicknameChecked) {
     setFieldState("nickname", "info", "중복확인을 진행해주세요.");
-    return false;
-  }
-  if (duplicateState.nicknameChecked) {
+  } else if (!ignoreStateUpdate && duplicateState.nicknameChecked) {
+    // 값 자체도 유효하고 중복 확인도 완료된 경우
     setFieldState("nickname", "success", "사용할 수 있는 별명입니다.");
+  } else if (!ignoreStateUpdate) {
+    // 값은 유효하나 중복 확인 상태는 'neutral'로 남겨둡니다. (input 이벤트 리스너에서 'neutral'로 설정하는 것이 더 명확함)
+    setFieldState("nickname", "neutral", "");
   }
+
   return true;
 }
 
-function validateEmail(ignoreDuplicate = false): boolean {
+/**
+ * 최종 닉네임 유효성 검사. (값 유효성 + 중복확인 완료 여부)
+ */
+function validateNickname(): boolean {
+    const valueValid = checkNicknameValueValidity(true); // 값 유효성만 체크 (상태 업데이트 없음)
+    
+    // 최종 제출 시에만 이 로직이 실행되어야 함.
+    if (!valueValid) {
+        // 이 함수를 호출한 곳에서 필드 상태 업데이트를 대신 수행할 수 있도록 함.
+        checkNicknameValueValidity(false); 
+        duplicateState.nicknameChecked = false; // 값이 유효하지 않으면 중복 확인 상태 초기화
+        return false;
+    }
+    
+    if (!duplicateState.nicknameChecked) {
+        setFieldState("nickname", "info", "중복확인을 진행해주세요.");
+        return false;
+    }
+    
+    setFieldState("nickname", "success", "사용할 수 있는 별명입니다.");
+    return true;
+}
+
+/**
+ * 이메일 필드 값 자체의 유효성 검사 (형식 등)를 수행합니다.
+ * 필드 상태 업데이트(메시지 표시)는 ignoreStateUpdate가 false일 때만 수행합니다.
+ * @param ignoreStateUpdate 필드 상태(색상, 메시지) 업데이트를 무시할지 여부
+ * @returns 유효성 여부
+ */
+function checkEmailValueValidity(ignoreStateUpdate = false): boolean {
   if (!emailInput) {
     return false;
   }
   const value = emailInput.value.trim();
+
   if (value.length === 0) {
-    setFieldState("email", "error", "이메일을 입력해주세요.");
-    duplicateState.emailChecked = false;
+    if (!ignoreStateUpdate) {
+      setFieldState("email", "error", "이메일을 입력해주세요.");
+    }
     return false;
   }
   if (!emailInput.checkValidity()) {
-    setFieldState("email", "error", "올바른 이메일 형식이 아니에요.");
-    duplicateState.emailChecked = false;
+    if (!ignoreStateUpdate) {
+      setFieldState("email", "error", "올바른 이메일 형식이 아니에요.");
+    }
     return false;
   }
-  if (!ignoreDuplicate && !duplicateState.emailChecked) {
+
+  // 값 자체는 유효하지만, 아직 중복 확인을 하지 않은 경우
+  if (!ignoreStateUpdate && !duplicateState.emailChecked) {
     setFieldState("email", "info", "중복확인을 진행해주세요.");
-    return false;
-  }
-  if (duplicateState.emailChecked) {
+  } else if (!ignoreStateUpdate && duplicateState.emailChecked) {
+    // 값 자체도 유효하고 중복 확인도 완료된 경우
     setFieldState("email", "success", "사용할 수 있는 이메일입니다.");
+  } else if (!ignoreStateUpdate) {
+    // 값은 유효하나 중복 확인 상태는 'neutral'로 남겨둡니다.
+    setFieldState("email", "neutral", "");
   }
+
   return true;
+}
+
+/**
+ * 최종 이메일 유효성 검사. (값 유효성 + 중복확인 완료 여부)
+ */
+function validateEmail(): boolean {
+    const valueValid = checkEmailValueValidity(true); // 값 유효성만 체크 (상태 업데이트 없음)
+    
+    if (!valueValid) {
+        checkEmailValueValidity(false);
+        duplicateState.emailChecked = false;
+        return false;
+    }
+    
+    if (!duplicateState.emailChecked) {
+        setFieldState("email", "info", "중복확인을 진행해주세요.");
+        return false;
+    }
+    
+    setFieldState("email", "success", "사용할 수 있는 이메일입니다.");
+    return true;
 }
 
 function validatePassword(): boolean {
@@ -142,35 +214,60 @@ function validatePasswordConfirm(): boolean {
   return true;
 }
 
+/**
+ * 제출 가능 상태를 업데이트합니다. (필드 상태 업데이트는 하지 않고 유효성 여부만 판단)
+ */
 function updateSubmitState(): void {
   if (!submitButton) {
     return;
   }
 
+  const nicknameValueValid = checkNicknameValueValidity(true); // 값 유효성만 확인
+  const emailValueValid = checkEmailValueValidity(true); // 값 유효성만 확인
+  const passwordValueValid = validatePassword(); // 값 유효성 확인 + 상태 업데이트
+  const confirmValueValid = validatePasswordConfirm(); // 값 유효성 확인 + 상태 업데이트
+  
+  // 비밀번호와 비밀번호 확인은 값 변경 시 필드 상태를 바로 업데이트하기 때문에 validate 함수를 그대로 사용해도 무방합니다.
+
   const canSubmit =
-    validateNickname(true) &&
-    validateEmail(true) &&
-    validatePassword() &&
-    validatePasswordConfirm() &&
+    nicknameValueValid &&
+    emailValueValid &&
+    passwordValueValid &&
+    confirmValueValid &&
     duplicateState.nicknameChecked &&
     duplicateState.emailChecked;
 
-  submitButton.disabled = false;
+  submitButton.disabled = !canSubmit; // canSubmit이 false면 disabled를 true로
   submitButton.classList.toggle("is-active", canSubmit);
 }
 
+/**
+ * 중복확인 버튼 클릭 핸들러 (현재 코드에서는 API 통신 없이 상태만 업데이트)
+ */
 function handleDuplicateCheck(type: "nickname" | "email"): void {
   if (type === "nickname") {
-    const valid = validateNickname(true);
+    // 값 유효성만 체크
+    const valid = checkNicknameValueValidity(true); 
     if (valid) {
+      // API 호출 성공 가정
       duplicateState.nicknameChecked = true;
       setFieldState("nickname", "success", "사용할 수 있는 별명입니다.");
+    } else {
+      // 값 유효성 검사 실패 시 필드 상태 업데이트
+      checkNicknameValueValidity(false);
+      duplicateState.nicknameChecked = false;
     }
   } else {
-    const valid = validateEmail(true);
+    // 값 유효성만 체크
+    const valid = checkEmailValueValidity(true);
     if (valid) {
+      // API 호출 성공 가정
       duplicateState.emailChecked = true;
       setFieldState("email", "success", "사용할 수 있는 이메일입니다.");
+    } else {
+      // 값 유효성 검사 실패 시 필드 상태 업데이트
+      checkEmailValueValidity(false);
+      duplicateState.emailChecked = false;
     }
   }
   updateSubmitState();
@@ -192,7 +289,8 @@ async function handleSubmit(event: SubmitEvent): Promise<void> {
   if (!form || !nicknameInput || !emailInput || !passwordInput || !submitButton) {
     return;
   }
-
+  
+  // 최종 제출 시에는 validateNickname, validateEmail을 호출하여 중복확인 상태까지 모두 검사하고 필드 상태를 업데이트합니다.
   const nicknameValid = validateNickname();
   const emailValid = validateEmail();
   const passwordValid = validatePassword();
@@ -224,11 +322,25 @@ async function handleSubmit(event: SubmitEvent): Promise<void> {
 
   if (!response.ok) {
     submitButton.disabled = false;
-    updateSubmitState();
+    // updateSubmitState() 대신 수동으로 상태 업데이트
+    const canSubmit = 
+        checkNicknameValueValidity(true) &&
+        checkEmailValueValidity(true) &&
+        validatePassword() &&
+        validatePasswordConfirm() &&
+        duplicateState.nicknameChecked &&
+        duplicateState.emailChecked;
+
+    submitButton.classList.toggle("is-active", canSubmit);
     setFormStatus(response.message ?? "회원가입에 실패했습니다.", "error");
+    
+    // 서버 응답에서 중복 오류가 발생한 경우 해당 필드의 상태를 업데이트합니다.
     if (response.message?.includes("이메일")) {
       duplicateState.emailChecked = false;
       setFieldState("email", "error", response.message);
+    } else if (response.message?.includes("별명") || response.message?.includes("닉네임")) {
+      duplicateState.nicknameChecked = false;
+      setFieldState("nickname", "error", response.message);
     }
     return;
   }
@@ -237,28 +349,36 @@ async function handleSubmit(event: SubmitEvent): Promise<void> {
   form.reset();
   duplicateState.nicknameChecked = false;
   duplicateState.emailChecked = false;
+  // 모든 필드 상태 초기화
   Object.keys(fieldElements).forEach((key) => {
     setFieldState(key as FieldKey, "neutral", "");
   });
-  updateSubmitState();
+  updateSubmitState(); // 초기 상태로 버튼 업데이트
 }
 
 function init(): void {
+  // 닉네임 입력 시
   nicknameInput?.addEventListener("input", () => {
-    duplicateState.nicknameChecked = false;
-    validateNickname(true);
+    duplicateState.nicknameChecked = false; // 입력이 변경되면 중복확인 상태 초기화
+    checkNicknameValueValidity(false); // 값 유효성 검사 및 필드 상태 업데이트
     updateSubmitState();
   });
+  
+  // 이메일 입력 시
   emailInput?.addEventListener("input", () => {
-    duplicateState.emailChecked = false;
-    validateEmail(true);
+    duplicateState.emailChecked = false; // 입력이 변경되면 중복확인 상태 초기화
+    checkEmailValueValidity(false); // 값 유효성 검사 및 필드 상태 업데이트
     updateSubmitState();
   });
+  
+  // 비밀번호 입력 시 (상태 바로 업데이트)
   passwordInput?.addEventListener("input", () => {
     validatePassword();
-    validatePasswordConfirm();
+    validatePasswordConfirm(); // 비밀번호가 바뀌면 비밀번호 확인도 다시 검사
     updateSubmitState();
   });
+  
+  // 비밀번호 확인 입력 시 (상태 바로 업데이트)
   passwordConfirmInput?.addEventListener("input", () => {
     validatePasswordConfirm();
     updateSubmitState();
