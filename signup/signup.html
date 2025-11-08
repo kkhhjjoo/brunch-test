@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>회원가입</title>
+    <link rel="stylesheet" href="signup.css" />
+  </head>
+  <body>
+    <main class="signup" aria-labelledby="signupHeading">
+      <h1 id="signupHeading" class="signup__title">회원가입</h1>
+
+      <form id="signupForm" class="signup__form" novalidate>
+        <section class="field" data-field="nickname">
+          <div class="field__header">
+            <label class="field__label" for="nicknameInput">별명</label>
+            <button type="button" class="field__action" data-action="nickname-check">중복확인</button>
+          </div>
+          <input
+            class="field__input"
+            type="text"
+            id="nicknameInput"
+            name="nickname"
+            placeholder="사용할 별명을 입력하세요"
+            autocomplete="nickname"
+            required
+            minlength="2"
+            maxlength="20"
+          />
+          <p class="field__message" id="nicknameMessage" aria-live="polite"></p>
+        </section>
+
+        <section class="field" data-field="email">
+          <div class="field__header">
+            <label class="field__label" for="emailInput">이메일</label>
+            <button type="button" class="field__action" data-action="email-check">중복확인</button>
+          </div>
+          <input
+            class="field__input"
+            type="email"
+            id="emailInput"
+            name="email"
+            placeholder="이메일을 입력하세요"
+            autocomplete="email"
+            required
+          />
+          <p class="field__message" id="emailMessage" aria-live="polite"></p>
+        </section>
+
+        <section class="field" data-field="password">
+          <div class="field__header">
+            <label class="field__label" for="passwordInput">비밀번호</label>
+            <button
+              type="button"
+              class="field__icon-button"
+              data-toggle="password"
+              aria-controls="passwordInput"
+              aria-label="비밀번호 보기"
+            ></button>
+          </div>
+          <input
+            class="field__input"
+            type="password"
+            id="passwordInput"
+            name="password"
+            placeholder="영문, 숫자 조합 8자 이상"
+            autocomplete="new-password"
+            required
+            minlength="8"
+          />
+          <p class="field__message" id="passwordMessage" aria-live="polite"></p>
+        </section>
+
+        <section class="field" data-field="passwordConfirm">
+          <div class="field__header">
+            <label class="field__label" for="passwordConfirmInput">비밀번호 확인</label>
+            <button
+              type="button"
+              class="field__icon-button"
+              data-toggle="password-confirm"
+              aria-controls="passwordConfirmInput"
+              aria-label="비밀번호 보기"
+            ></button>
+          </div>
+          <input
+            class="field__input"
+            type="password"
+            id="passwordConfirmInput"
+            name="passwordConfirm"
+            placeholder="비밀번호를 한 번 더 입력하세요"
+            autocomplete="new-password"
+            required
+            minlength="8"
+          />
+          <p class="field__message" id="passwordConfirmMessage" aria-live="polite"></p>
+        </section>
+
+        <div class="form-status" role="status" aria-live="polite"></div>
+
+        <button type="submit" class="signup__submit" disabled>회원가입</button>
+      </form>
+    </main>
+
+    <script type="module" src="signup.ts"></script>
+  </body>
+</html>

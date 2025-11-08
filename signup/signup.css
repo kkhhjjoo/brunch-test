@@ -1,0 +1,183 @@
+:root {
+  font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  line-height: 1.5;
+  color: #191919;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fafafa;
+  padding: 48px 16px;
+}
+
+.signup {
+  width: min(420px, 100%);
+  background: #ffffff;
+  padding: 56px 40px 64px;
+  border-radius: 28px;
+  box-shadow: 0 32px 70px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.signup__title {
+  margin: 0;
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.signup__form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.field__label {
+  font-size: 0.95rem;
+  color: #444444;
+}
+
+.field__action {
+  border: 1px solid #4cc4b5;
+  color: #4cc4b5;
+  border-radius: 999px;
+  background: transparent;
+  padding: 4px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.field__action:hover,
+.field__action:focus-visible {
+  background: #4cc4b5;
+  color: #ffffff;
+  outline: none;
+}
+
+.field__icon-button {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.5 12C3.5 7.5 7.5 4.5 12 4.5C16.5 4.5 20.5 7.5 22.5 12C20.5 16.5 16.5 19.5 12 19.5C7.5 19.5 3.5 16.5 1.5 12Z' stroke='%23979797' stroke-width='1.5'/%3E%3Ccircle cx='12' cy='12' r='3.5' stroke='%23979797' stroke-width='1.5'/%3E%3C/svg%3E") center/contain no-repeat;
+  cursor: pointer;
+}
+
+.field__icon-button.is-visible {
+  background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.5 12C3.5 7.5 7.5 4.5 12 4.5C16.5 4.5 20.5 7.5 22.5 12C20.5 16.5 16.5 19.5 12 19.5C7.5 19.5 3.5 16.5 1.5 12Z' stroke='%23979797' stroke-width='1.5'/%3E%3Cpath d='M4 4L20 20' stroke='%23979797' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.field__input {
+  padding: 14px 0;
+  font-size: 1rem;
+  border: none;
+  border-bottom: 1px solid #d5d5d5;
+  background: transparent;
+  transition: border-color 0.2s ease;
+}
+
+.field__input:focus {
+  outline: none;
+  border-color: #40b39d;
+}
+
+.field__message {
+  margin: 0;
+  min-height: 18px;
+  font-size: 0.78rem;
+  color: #a2a2a2;
+}
+
+.field--success .field__label,
+.field--success .field__message {
+  color: #40b39d;
+}
+
+.field--success .field__input {
+  border-color: #40b39d;
+}
+
+.field--error .field__label,
+.field--error .field__message {
+  color: #ef4a72;
+}
+
+.field--error .field__input {
+  border-color: #ef4a72;
+}
+
+.field--info .field__label,
+.field--info .field__message {
+  color: #40b39d;
+}
+
+.form-status {
+  min-height: 22px;
+  font-size: 0.85rem;
+  color: #6f6f6f;
+  text-align: center;
+}
+
+.form-status.is-success {
+  color: #40b39d;
+}
+
+.form-status.is-error {
+  color: #ef4a72;
+}
+
+.signup__submit {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 14px;
+  background: #cfcfcf;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: not-allowed;
+  transition: background-color 0.2s ease;
+}
+
+.signup__submit.is-active {
+  background: #40b39d;
+  cursor: pointer;
+}
+
+.signup__submit.is-active:hover {
+  background: #2f8c7c;
+}
+
+@media (max-width: 520px) {
+  body {
+    padding: 32px 12px;
+  }
+
+  .signup {
+    padding: 48px 28px 56px;
+  }
+}

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>브런치 로그인</title>
+    <link rel="stylesheet" href="login.css" />
+  </head>
+  <body class="theme-brunch">
+    <div class="login-page" role="application">
+      <header class="theme-switcher" aria-label="로그인 테마 설정">
+        <h1 class="theme-switcher__title">테마 선택</h1>
+        <div class="theme-switcher__buttons" role="group" aria-label="테마 토글">
+          <button
+            type="button"
+            class="theme-switcher__button is-active"
+            data-theme="theme-brunch"
+          >
+            기본
+          </button>
+          <button
+            type="button"
+            class="theme-switcher__button"
+            data-theme="theme-kakao"
+          >
+            카카오 폼
+          </button>
+          <button
+            type="button"
+            class="theme-switcher__button"
+            data-theme="theme-social"
+          >
+            간편 로그인
+          </button>
+        </div>
+      </header>
+
+      <main class="login" aria-labelledby="loginHeading">
+        <section class="login__hero">
+          <div class="login__illustration" aria-hidden="true">
+            <svg
+              viewBox="0 0 160 120"
+              role="presentation"
+              focusable="false"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                opacity="0.7"
+              >
+                <path d="M50 84c-6-8-10-17-10-27 0-20 14-36 32-36s32 16 32 36c0 10-4 19-10 27" />
+                <path d="M63 30c0-8 6-14 14-14s14 6 14 14" />
+                <path d="M46 84h68" />
+                <path d="M68 58h24" />
+                <path d="M64 68h32" />
+                <path d="M72 78h16" />
+                <path d="M38 92h84" />
+                <path d="M44 102h72" />
+              </g>
+            </svg>
+          </div>
+          <h2 id="loginHeading" class="login__title">브런치 작가로 데뷔하세요.</h2>
+          <p class="login__subtitle">
+            진솔한 에세이부터 업계 전문 지식까지, 당신의 이야기를 세상에 선보이세요.
+          </p>
+        </section>
+
+        <section class="login__social" aria-label="소셜 로그인">
+          <button type="button" class="login__kakao" data-role="kakao-login">
+            <span aria-hidden="true">💬</span>
+            카카오계정으로 로그인
+          </button>
+          <p class="login__kakao-help">내 브런치스토리의 카카오계정을 모르겠어요</p>
+          <a class="login__link" href="#" data-role="social-alt">페이스북, 트위터로만 로그인 했었나요?</a>
+        </section>
+
+        <form id="loginForm" class="login__form" novalidate>
+          <div class="field" data-field="email">
+            <label class="field__label" for="emailInput">이메일</label>
+            <input
+              class="field__input"
+              type="email"
+              id="emailInput"
+              name="email"
+              autocomplete="email"
+              placeholder="이메일 주소를 입력하세요"
+              required
+            />
+            <p id="emailMessage" class="field__message" aria-live="polite"></p>
+          </div>
+
+          <div class="field" data-field="password">
+            <div class="field__header">
+              <label class="field__label" for="passwordInput">비밀번호</label>
+              <button
+                type="button"
+                class="field__toggle"
+                data-toggle="passwordInput"
+                aria-controls="passwordInput"
+                aria-label="비밀번호 보기 토글"
+              >
+                보기
+              </button>
+            </div>
+            <input
+              class="field__input"
+              type="password"
+              id="passwordInput"
+              name="password"
+              autocomplete="current-password"
+              minlength="6"
+              placeholder="비밀번호를 입력하세요"
+              required
+            />
+            <p id="passwordMessage" class="field__message" aria-live="polite"></p>
+          </div>
+
+          <div class="login__options">
+            <button
+              type="button"
+              class="remember"
+              data-role="remember"
+              aria-pressed="false"
+            >
+              <span class="remember__check" aria-hidden="true">✓</span>
+              로그인 정보 저장
+            </button>
+            <a class="login__link" href="#">비밀번호 찾기</a>
+          </div>
+
+          <div class="login__status" role="status" aria-live="polite"></div>
+
+          <button type="submit" class="login__submit" disabled>로그인</button>
+
+          <footer class="login__footer">
+            <a class="login__link" href="#">회원가입</a>
+            <a class="login__link" href="#">계정 찾기</a>
+          </footer>
+        </form>
+      </main>
+    </div>
+
+    <script type="module" src="login.ts"></script>
+  </body>
+</html>
