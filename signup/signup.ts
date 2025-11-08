@@ -1,4 +1,4 @@
-import { registerMember, MemberRes } from "../api";
+import { registerUser, ApiItemResponse, User } from "../api";
 
 const form = document.querySelector<HTMLFormElement>("#signupForm");
 const nicknameInput = document.querySelector<HTMLInputElement>("#nicknameInput");
@@ -207,13 +207,12 @@ async function handleSubmit(event: SubmitEvent): Promise<void> {
   submitButton.classList.remove("is-active");
   setFormStatus("회원가입을 진행하고 있어요...", "info");
 
-  let response: MemberRes;
+  let response: ApiItemResponse<User>;
   try {
-    response = await registerMember({
-      id: emailInput.value.trim(),
-      pw: passwordInput.value,
-      name: nicknameInput.value.trim(),
+    response = await registerUser({
       email: emailInput.value.trim(),
+      password: passwordInput.value,
+      name: nicknameInput.value.trim(),
     });
   } catch (error) {
     console.error(error);

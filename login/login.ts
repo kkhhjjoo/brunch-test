@@ -201,7 +201,7 @@ function validatePassword(): boolean {
 
 async function loginMember(request: LoginRequest): Promise<LoginResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/member/login`, {
+    const response = await fetch(`${API_BASE_URL}/users/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -229,7 +229,7 @@ async function loginMember(request: LoginRequest): Promise<LoginResponse> {
 
 async function fetchMemberInfo(token: string): Promise<MemberResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/member/info`, {
+    const response = await fetch(`${API_BASE_URL}/users/info`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -1,0 +1,268 @@
+:root {
+  font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  line-height: 1.5;
+  color: #1d1d1f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #f4f7fb;
+  padding: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+.member-admin {
+  width: min(1200px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.member-admin__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.member-admin__title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.member-admin__subtitle {
+  margin: 4px 0 0;
+  font-size: 0.95rem;
+  color: #6f7785;
+}
+
+.member-admin__actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.search {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid #d0d7e6;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(82, 103, 136, 0.08);
+}
+
+.search__input {
+  border: none;
+  outline: none;
+  font-size: 0.95rem;
+  background: transparent;
+}
+
+.refresh-button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 12px;
+  background: #5c6cff;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 12px 25px rgba(92, 108, 255, 0.25);
+  transition: transform 0.15s ease;
+}
+
+.refresh-button:hover {
+  transform: translateY(-1px);
+}
+
+.member-admin__content {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 24px;
+}
+
+.member-list,
+.member-detail {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 24px 60px rgba(21, 33, 55, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.member-list__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.member-list__count {
+  margin: 0;
+  color: #6f7785;
+  font-size: 0.9rem;
+}
+
+.member-list__wrapper {
+  overflow: auto;
+  border-radius: 18px;
+  border: 1px solid #e0e7f5;
+}
+
+.member-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.member-table thead {
+  background: #f6f8fd;
+  color: #5b6680;
+}
+
+.member-table th,
+.member-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #eef1f7;
+}
+
+.member-table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.member-table tbody tr:hover {
+  background: rgba(92, 108, 255, 0.08);
+}
+
+.member-table tbody tr.is-selected {
+  background: rgba(92, 108, 255, 0.12);
+}
+
+.member-table__empty td {
+  text-align: center;
+  color: #7d8594;
+}
+
+.member-detail__placeholder {
+  margin: 0;
+  color: #7d8594;
+  font-size: 0.95rem;
+}
+
+.member-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.member-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.member-form__label {
+  font-weight: 600;
+  color: #526788;
+}
+
+.member-form__field input {
+  padding: 12px 14px;
+  border: 1px solid #d0d7e6;
+  border-radius: 12px;
+  font-size: 1rem;
+  background: #fdfdff;
+}
+
+.member-form__field input:disabled {
+  background: #f4f7fb;
+  color: #7d8594;
+}
+
+.member-form__message {
+  min-height: 18px;
+  font-size: 0.78rem;
+  color: #f0537a;
+}
+
+.member-form__actions {
+  display: flex;
+  gap: 12px;
+}
+
+.member-form__button {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.member-form__button:hover {
+  transform: translateY(-1px);
+}
+
+.member-form__button--primary {
+  background: #26c6ae;
+  color: #ffffff;
+  box-shadow: 0 12px 30px rgba(38, 198, 174, 0.25);
+}
+
+.member-form__button--danger {
+  background: #ff6b6b;
+  color: #ffffff;
+  box-shadow: 0 12px 30px rgba(255, 107, 107, 0.25);
+}
+
+.member-form__status {
+  min-height: 20px;
+  font-size: 0.88rem;
+  color: #5b6680;
+}
+
+.member-form__status.is-success {
+  color: #26c6ae;
+}
+
+.member-form__status.is-error {
+  color: #ff6b6b;
+}
+
+@media (max-width: 1024px) {
+  .member-admin__content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    padding: 16px;
+  }
+
+  .member-admin__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .member-admin__actions {
+    justify-content: space-between;
+  }
+
+  .member-form__actions {
+    flex-direction: column;
+  }
+}
