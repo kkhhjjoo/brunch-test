@@ -160,7 +160,7 @@ function updateSubmitState(): void {
   const passwordValid = passwordInput.value.trim().length >= 6;
   const isActive = emailValid && passwordValid;
 
-  submitButton.disabled = !isActive;
+  submitButton.disabled = false;
   submitButton.classList.toggle("is-active", isActive);
 }
 

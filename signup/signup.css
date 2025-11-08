@@ -79,6 +79,12 @@ body {
   outline: none;
 }
 
+.field__action.is-active {
+  background: #4cc4b5;
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(76, 196, 181, 0.3);
+}
+
 .field__icon-button {
   width: 24px;
   height: 24px;

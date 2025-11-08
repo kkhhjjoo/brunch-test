@@ -155,7 +155,7 @@ function updateSubmitState(): void {
     duplicateState.nicknameChecked &&
     duplicateState.emailChecked;
 
-  submitButton.disabled = !canSubmit;
+  submitButton.disabled = false;
   submitButton.classList.toggle("is-active", canSubmit);
 }
 
