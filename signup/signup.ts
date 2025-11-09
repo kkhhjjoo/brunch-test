@@ -1,4 +1,4 @@
-import { registerUser, ApiItemResponse, User } from "../api";
+import { registerUser, getUserList, ApiItemResponse, User } from "../api";
 
 const form = document.querySelector<HTMLFormElement>("#signupForm");
 const nicknameInput = document.querySelector<HTMLInputElement>("#nicknameInput");
@@ -242,35 +242,79 @@ function updateSubmitState(): void {
 }
 
 /**
- * 중복확인 버튼 클릭 핸들러 (현재 코드에서는 API 통신 없이 상태만 업데이트)
+ * 중복확인 버튼 클릭 핸들러 (회원 목록 API를 참조해 중복 여부를 확인)
  */
-function handleDuplicateCheck(type: "nickname" | "email"): void {
-  if (type === "nickname") {
-    // 값 유효성만 체크
-    const valid = checkNicknameValueValidity(true); 
-    if (valid) {
-      // API 호출 성공 가정
-      duplicateState.nicknameChecked = true;
-      setFieldState("nickname", "success", "사용할 수 있는 별명입니다.");
-    } else {
-      // 값 유효성 검사 실패 시 필드 상태 업데이트
+async function handleDuplicateCheck(type: "nickname" | "email"): Promise<void> {
+  const isNickname = type === "nickname";
+  const input = isNickname ? nicknameInput : emailInput;
+  const button = isNickname ? nicknameCheckButton : emailCheckButton;
+  const valid = isNickname ? checkNicknameValueValidity(true) : checkEmailValueValidity(true);
+
+  if (!input || !valid) {
+    if (isNickname) {
       checkNicknameValueValidity(false);
       duplicateState.nicknameChecked = false;
-    }
-  } else {
-    // 값 유효성만 체크
-    const valid = checkEmailValueValidity(true);
-    if (valid) {
-      // API 호출 성공 가정
-      duplicateState.emailChecked = true;
-      setFieldState("email", "success", "사용할 수 있는 이메일입니다.");
     } else {
-      // 값 유효성 검사 실패 시 필드 상태 업데이트
       checkEmailValueValidity(false);
       duplicateState.emailChecked = false;
     }
+    updateSubmitState();
+    return;
   }
-  updateSubmitState();
+
+  const value = input.value.trim();
+  button?.setAttribute("disabled", "true");
+  button?.classList.remove("is-active");
+  setFormStatus(`${isNickname ? "별명" : "이메일"} 중복을 확인하고 있어요...`, "info");
+
+  try {
+    const response = await getUserList();
+    if (!response.ok) {
+      throw new Error(response.message ?? "회원 목록을 불러오지 못했습니다.");
+    }
+
+    const list = (response.items ?? response.data ?? []) as User[];
+    const exists = list.some((user) => {
+      if (!user) {
+        return false;
+      }
+      return isNickname ? user.name === value : user.email === value;
+    });
+
+    if (exists) {
+      if (isNickname) {
+        duplicateState.nicknameChecked = false;
+        setFieldState("nickname", "error", "이미 사용 중인 별명입니다.");
+      } else {
+        duplicateState.emailChecked = false;
+        setFieldState("email", "error", "이미 사용 중인 이메일입니다.");
+      }
+      setFormStatus(`이미 사용 중인 ${isNickname ? "별명" : "이메일"}이에요.`, "error");
+    } else {
+      if (isNickname) {
+        duplicateState.nicknameChecked = true;
+        setFieldState("nickname", "success", "사용할 수 있는 별명입니다.");
+      } else {
+        duplicateState.emailChecked = true;
+        setFieldState("email", "success", "사용할 수 있는 이메일입니다.");
+      }
+      setFormStatus(`사용 가능한 ${isNickname ? "별명" : "이메일"}이에요!`, "success");
+    }
+  } catch (error) {
+    console.error(error);
+    if (isNickname) {
+      duplicateState.nicknameChecked = false;
+      setFieldState("nickname", "error", "중복 확인을 다시 시도해주세요.");
+    } else {
+      duplicateState.emailChecked = false;
+      setFieldState("email", "error", "중복 확인을 다시 시도해주세요.");
+    }
+    setFormStatus("중복 확인에 실패했습니다. 잠시 후 다시 시도해주세요.", "error");
+  } finally {
+    button?.removeAttribute("disabled");
+    button?.classList.add("is-active");
+    updateSubmitState();
+  }
 }
 
 function togglePasswordVisibility(input: HTMLInputElement | null, button: HTMLButtonElement | null): void {
@@ -384,8 +428,12 @@ function init(): void {
     updateSubmitState();
   });
 
-  nicknameCheckButton?.addEventListener("click", () => handleDuplicateCheck("nickname"));
-  emailCheckButton?.addEventListener("click", () => handleDuplicateCheck("email"));
+  nicknameCheckButton?.addEventListener("click", () => {
+    void handleDuplicateCheck("nickname");
+  });
+  emailCheckButton?.addEventListener("click", () => {
+    void handleDuplicateCheck("email");
+  });
 
   passwordToggle?.addEventListener("click", () => togglePasswordVisibility(passwordInput, passwordToggle));
   passwordConfirmToggle?.addEventListener("click", () =>
