@@ -229,7 +229,7 @@ async function loginMember(request: LoginRequest): Promise<LoginResponse> {
 
 async function fetchMemberInfo(token: string): Promise<MemberResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/users/info`, {
+    const response = await fetch(`${API_BASE_URL}/users/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
