@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>회원가입</title>
     <link rel="stylesheet" href="signup.css" />
+    <script type="module" src="./signup.ts"></script>
   </head>
   <body>
     <main class="signup" aria-labelledby="signupHeading">
@@ -14,7 +15,11 @@
         <section class="field" data-field="nickname">
           <div class="field__header">
             <label class="field__label" for="nicknameInput">별명</label>
-            <button type="button" class="field__action is-active" data-action="nickname-check">
+            <button
+              type="button"
+              class="field__action is-active"
+              data-action="nickname-check"
+            >
               중복확인
             </button>
           </div>
@@ -35,7 +40,11 @@
         <section class="field" data-field="email">
           <div class="field__header">
             <label class="field__label" for="emailInput">이메일</label>
-            <button type="button" class="field__action is-active" data-action="email-check">
+            <button
+              type="button"
+              class="field__action is-active"
+              data-action="email-check"
+            >
               중복확인
             </button>
           </div>
@@ -51,7 +60,7 @@
           <p class="field__message" id="emailMessage" aria-live="polite"></p>
         </section>
 
-        <section class="field" data-field="password">
+        <section class="field" id="password_section" data-field="password">
           <div class="field__header">
             <label class="field__label" for="passwordInput">비밀번호</label>
             <button
@@ -77,7 +86,9 @@
 
         <section class="field" data-field="passwordConfirm">
           <div class="field__header">
-            <label class="field__label" for="passwordConfirmInput">비밀번호 확인</label>
+            <label class="field__label" for="passwordConfirmInput"
+              >비밀번호 확인</label
+            >
             <button
               type="button"
               class="field__icon-button"
@@ -96,7 +107,11 @@
             required
             minlength="8"
           />
-          <p class="field__message" id="passwordConfirmMessage" aria-live="polite"></p>
+          <p
+            class="field__message"
+            id="passwordConfirmMessage"
+            aria-live="polite"
+          ></p>
         </section>
 
         <div class="form-status" role="status" aria-live="polite"></div>
@@ -104,7 +119,5 @@
         <button type="submit" class="signup__submit is-active">회원가입</button>
       </form>
     </main>
-
-    <script type="module" src="signup.ts"></script>
   </body>
 </html>

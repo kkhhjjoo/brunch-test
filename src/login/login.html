@@ -10,7 +10,11 @@
     <div class="login-page" role="application">
       <header class="theme-switcher" aria-label="로그인 테마 설정">
         <h1 class="theme-switcher__title">테마 선택</h1>
-        <div class="theme-switcher__buttons" role="group" aria-label="테마 토글">
+        <div
+          class="theme-switcher__buttons"
+          role="group"
+          aria-label="테마 토글"
+        >
           <button
             type="button"
             class="theme-switcher__button is-active"
@@ -52,7 +56,9 @@
                 stroke-width="2"
                 opacity="0.7"
               >
-                <path d="M50 84c-6-8-10-17-10-27 0-20 14-36 32-36s32 16 32 36c0 10-4 19-10 27" />
+                <path
+                  d="M50 84c-6-8-10-17-10-27 0-20 14-36 32-36s32 16 32 36c0 10-4 19-10 27"
+                />
                 <path d="M63 30c0-8 6-14 14-14s14 6 14 14" />
                 <path d="M46 84h68" />
                 <path d="M68 58h24" />
@@ -63,9 +69,12 @@
               </g>
             </svg>
           </div>
-          <h2 id="loginHeading" class="login__title">브런치 작가로 데뷔하세요.</h2>
+          <h2 id="loginHeading" class="login__title">
+            브런치 작가로 데뷔하세요.
+          </h2>
           <p class="login__subtitle">
-            진솔한 에세이부터 업계 전문 지식까지, 당신의 이야기를 세상에 선보이세요.
+            진솔한 에세이부터 업계 전문 지식까지, 당신의 이야기를 세상에
+            선보이세요.
           </p>
         </section>
 
@@ -74,8 +83,12 @@
             <span aria-hidden="true">💬</span>
             카카오계정으로 로그인
           </button>
-          <p class="login__kakao-help">내 브런치스토리의 카카오계정을 모르겠어요</p>
-          <a class="login__link" href="#" data-role="social-alt">페이스북, 트위터로만 로그인 했었나요?</a>
+          <p class="login__kakao-help">
+            내 브런치스토리의 카카오계정을 모르겠어요
+          </p>
+          <a class="login__link" href="#" data-role="social-alt"
+            >페이스북, 트위터로만 로그인 했었나요?</a
+          >
         </section>
 
         <form id="loginForm" class="login__form" novalidate>
@@ -116,7 +129,11 @@
               placeholder="비밀번호를 입력하세요"
               required
             />
-            <p id="passwordMessage" class="field__message" aria-live="polite"></p>
+            <p
+              id="passwordMessage"
+              class="field__message"
+              aria-live="polite"
+            ></p>
           </div>
 
           <div class="login__options">
@@ -144,6 +161,6 @@
       </main>
     </div>
 
-    <script type="module" src="login.ts"></script>
+    <script type="module" src="./login.ts"></script>
   </body>
 </html>
