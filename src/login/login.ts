@@ -40,6 +40,25 @@ const fields = {
   password: document.querySelector<HTMLDivElement>("[data-field='password']"),
 };
 const themeButtons = document.querySelectorAll<HTMLButtonElement>(".theme-switcher__button");
+const kakaoLoginButton =
+  document.querySelector<HTMLButtonElement>("[data-role='kakao-login']") ??
+  document.querySelector<HTMLButtonElement>(".kakao-btn");
+
+const KAKAO_META_KEYS = {
+  clientId: "kakao-client-id",
+  redirectUri: "kakao-redirect-uri",
+  returnUrl: "kakao-return-url",
+} as const;
+
+const SESSION_KEYS = {
+  kakaoReturnUrl: "brunch.login.kakao.return-url",
+} as const;
+
+interface KakaoLoginConfig {
+  clientId: string;
+  redirectUri: string;
+  returnUrl: string;
+}
 
 function safelyUseLocalStorage<T>(fallback: T, task: () => T): T {
   try {
@@ -47,6 +66,147 @@ function safelyUseLocalStorage<T>(fallback: T, task: () => T): T {
   } catch (error) {
     console.warn("로컬 스토리지 사용이 제한되었습니다.", error);
     return fallback;
+  }
+}
+
+function safelyUseSessionStorage<T>(fallback: T, task: () => T): T {
+  try {
+    return task();
+  } catch (error) {
+    console.warn("세션 스토리지 사용이 제한되었습니다.", error);
+    return fallback;
+  }
+}
+
+function getMetaContent(name: string): string | null {
+  const element = document.querySelector<HTMLMetaElement>(`meta[name='${name}']`);
+  const value = element?.content?.trim();
+  return value && value.length > 0 ? value : null;
+}
+
+function getKakaoConfig(): KakaoLoginConfig {
+  return {
+    clientId: getMetaContent(KAKAO_META_KEYS.clientId) ?? "",
+    redirectUri:
+      getMetaContent(KAKAO_META_KEYS.redirectUri) ??
+      `${window.location.origin}/login/kakao-callback.html`,
+    returnUrl: getMetaContent(KAKAO_META_KEYS.returnUrl) ?? window.location.href,
+  };
+}
+
+function createKakaoState(config: KakaoLoginConfig): string | undefined {
+  const payload = {
+    redirectUrl: config.returnUrl || window.location.href,
+    ts: Date.now(),
+  };
+  try {
+    return window.btoa(encodeURIComponent(JSON.stringify(payload)));
+  } catch (error) {
+    console.warn("카카오 state를 생성할 수 없습니다.", error);
+    return undefined;
+  }
+}
+
+function rememberKakaoReturnUrl(url: string): void {
+  safelyUseSessionStorage(null, () => {
+    sessionStorage.setItem(SESSION_KEYS.kakaoReturnUrl, url);
+    return null;
+  });
+}
+
+async function handleKakaoLoginStart(): Promise<void> {
+  if (!kakaoLoginButton) {
+    return;
+  }
+
+  const config = getKakaoConfig();
+  if (!config.clientId) {
+    setStatus("카카오 client-id가 설정되지 않았습니다.", "error");
+    return;
+  }
+
+  const state = createKakaoState(config);
+  const requestUrl = new URL(`${API_BASE_URL}/users/login/oauth/kakao`);
+  requestUrl.searchParams.set("redirect-uri", config.redirectUri);
+  if (state) {
+    requestUrl.searchParams.set("state", state);
+  }
+
+  const fallbackUrl = new URL(requestUrl.toString());
+  fallbackUrl.searchParams.set("client-id", config.clientId);
+
+  rememberKakaoReturnUrl(config.returnUrl || window.location.href);
+
+  const originalText = kakaoLoginButton.textContent ?? "";
+
+  try {
+    kakaoLoginButton.disabled = true;
+    kakaoLoginButton.classList.add("is-loading");
+    kakaoLoginButton.textContent = "카카오로 이동 중...";
+    setStatus("카카오 로그인 페이지로 이동합니다...", "info");
+
+    const response = await fetch(requestUrl.toString(), {
+      method: "GET",
+      headers: {
+        "client-id": config.clientId,
+        Accept: "application/json",
+      },
+      redirect: "manual",
+      credentials: "include",
+    });
+
+    if (response.type === "opaqueredirect") {
+      window.location.href = fallbackUrl.toString();
+      return;
+    }
+
+    if (response.status >= 300 && response.status < 400) {
+      const locationHeader = response.headers.get("Location");
+      if (locationHeader) {
+        window.location.href = locationHeader;
+        return;
+      }
+    }
+
+    const responseText = await response.text();
+    if (responseText) {
+      try {
+        const payload = JSON.parse(responseText) as {
+          ok?: boolean;
+          message?: string;
+          url?: string;
+          redirectUri?: string;
+        };
+        if (payload.url) {
+          window.location.href = payload.url;
+          return;
+        }
+        if (payload.redirectUri) {
+          window.location.href = payload.redirectUri;
+          return;
+        }
+        if (payload.ok) {
+          window.location.href = config.redirectUri;
+          return;
+        }
+        if (payload.message) {
+          setStatus(payload.message, "error");
+          return;
+        }
+      } catch (error) {
+        console.warn("카카오 로그인 응답을 파싱할 수 없습니다.", error);
+      }
+    }
+
+    setStatus("카카오 로그인에 실패했습니다. 잠시 후 다시 시도해주세요.", "error");
+  } catch (error) {
+    console.error(error);
+    setStatus("카카오 로그인 요청 중 문제가 발생했습니다.", "error");
+    window.location.href = fallbackUrl.toString();
+  } finally {
+    kakaoLoginButton.disabled = false;
+    kakaoLoginButton.classList.remove("is-loading");
+    kakaoLoginButton.textContent = originalText;
   }
 }
 
@@ -201,7 +361,7 @@ function validatePassword(): boolean {
 
 async function loginMember(request: LoginRequest): Promise<LoginResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/member/login`, {
+    const response = await fetch(`${API_BASE_URL}/users/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -229,7 +389,7 @@ async function loginMember(request: LoginRequest): Promise<LoginResponse> {
 
 async function fetchMemberInfo(token: string): Promise<MemberResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/member/info`, {
+    const response = await fetch(`${API_BASE_URL}/users/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -383,10 +543,21 @@ function initEventHandlers(): void {
   });
 }
 
+function initKakaoLogin(): void {
+  if (!kakaoLoginButton) {
+    return;
+  }
+
+  kakaoLoginButton.addEventListener("click", () => {
+    void handleKakaoLoginStart();
+  });
+}
+
 function init(): void {
   restoreTheme();
   restoreRememberState();
   updateSubmitState();
+  initKakaoLogin();
   initEventHandlers();
 }
 
